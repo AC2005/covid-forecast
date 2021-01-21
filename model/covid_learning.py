@@ -72,6 +72,7 @@ def main():
     parser.add_argument('--days', type=int,help="Days for prediction")
     parser.add_argument('--state', type=str, help="State for prediction")
     parser.add_argument('--county', type=str, help='County for prediction, must have a state argument')
+    parser.add_argument('--window_size', type=int, help="Window for prediction", default=0)
     args = parser.parse_args()
 
     cumulative_cases, daily_cases, dates = get_cases(state=args.state, county=args.county)
@@ -92,7 +93,10 @@ def main():
         model_sts.forcast_surrogate(sample=100)
     elif args.model == "hmc":
         for day in range(start_index, last_index, args.steps):
-            model_sts = modelSTS(200, daily_cases.loc[day-50:day])
+            if args.window_size > 0:
+                model_sts = modelSTS(200, daily_cases.loc[day-args.window_size:day])
+            else:
+                model_sts = modelSTS(200, daily_cases.loc[:day])
             model_sts.build_model_sts()
             model_sts.training_hmc()
             forecast_mean, forecast_scale, forecast_samples = model_sts.forcast_hmc(num_steps_forecast=args.steps)
