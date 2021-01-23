@@ -3,9 +3,10 @@ import numpy as np
 import seaborn as sns
 import matplotlib.pyplot as plt
 
+predict_file_window = "/Users/AndrewC 1/git/covid-forecast/output/ca_predicts_window50.csv"
+predict_file = "/Users/AndrewC 1/git/covid-forecast/output/ca_predicts.csv"
 
-
-df = pd.read_csv("https://raw.githubusercontent.com/AC2005/covid-learning/main/output/sc_predicts.csv")
+df = pd.read_csv(predict_file)
 
 def calc_percent_error(data, startdate):
     individual_percent_error = list()
