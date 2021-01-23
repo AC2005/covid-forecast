@@ -46,6 +46,11 @@ class modelSTS(baseModel):
             observed_time_series=self.training_data,
             name="biweekly_model"
         )
+        monthly_seasonal = tfp.sts.Seasonal(
+            num_seasons=30,
+            observed_time_series=self.training_data,
+            name="monthly_model"
+        )
         residual_level = tfp.sts.Autoregressive(
             order=1,
             observed_time_series=self.training_data,
@@ -57,6 +62,7 @@ class modelSTS(baseModel):
                               fivedays_seasonal,
                               weekly_seasonal,
                               biweekly_seasonal,
+                              monthly_seasonal,
                               residual_level
                               ], observed_time_series=self.training_data)
         self.variational_posteriors = tfp.sts.build_factored_surrogate_posterior(model=self.model)

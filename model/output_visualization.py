@@ -3,8 +3,8 @@ import numpy as np
 import seaborn as sns
 import matplotlib.pyplot as plt
 
-predict_file_window = "/Users/AndrewC 1/git/covid-forecast/output/ca_predicts_window50.csv"
-predict_file = "/Users/AndrewC 1/git/covid-forecast/output/ca_predicts.csv"
+predict_file_window = "/Users/AndrewC 1/git/covid-forecast/output/us_predicts_window200.csv"
+predict_file = "/Users/AndrewC 1/git/covid-forecast/output/us_predicts.csv"
 
 df = pd.read_csv(predict_file)
 
