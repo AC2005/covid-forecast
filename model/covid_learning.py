@@ -1,5 +1,6 @@
 import argparse
 import logging
+import json
 from model.sts_model import *
 from model.nn_model import *
 
@@ -67,6 +68,7 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--model', type=str, help='AI Model')
     parser.add_argument('--output', type=str, help='Output file')
+    parser.add_argument('--param_output', type=str, help="File to write parameters")
     parser.add_argument('--steps', type=int, help='Predict steps')
     parser.add_argument('--startdate', type=str, help='Start date')
     parser.add_argument('--days', type=int,help="Days for prediction")
@@ -92,6 +94,7 @@ def main():
         plt.show()
         model_sts.forcast_surrogate(sample=100)
     elif args.model == "hmc":
+        parameter = {}
         for day in range(start_index, last_index, args.steps):
             if args.window_size > 0:
                 model_sts = modelSTS(200, daily_cases.loc[day-args.window_size:day])
@@ -100,11 +103,24 @@ def main():
             model_sts.build_model_sts()
             model_sts.training_hmc()
             forecast_mean, forecast_scale, forecast_samples = model_sts.forcast_hmc(num_steps_forecast=args.steps)
+
             model_sts.save_result(args.output,
                                   model_sts.get_actual_dates(dates, day, day+args.steps),
                                   model_sts.get_actual_cases(daily_cases, day, day+args.steps),
                                   CASES_COLUMN,
                                   forecast_mean[:args.steps].numpy())
+            component_means, component_stddevs, forecast_component_means, forecast_component_stddevs = model_sts.get_trend_dist()
+            parameter[str(dates[day])] = {
+                "component_means": component_means,
+                "component_steddevs": component_stddevs,
+                "forecast_component_means": forecast_component_means,
+                "forecast_component_stddevs": forecast_component_stddevs,
+
+            }
+        with open(args.param_output, "a") as f:
+            #open json , if key exists, overwrite, then dump.
+            json.dump(parameter, f, indent=2)
+
     elif args.model == 'nn':
         for day in range(start_index, last_index, args.steps):
             model_nn = modelNN()

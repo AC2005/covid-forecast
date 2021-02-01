@@ -3,10 +3,14 @@ import numpy as np
 import seaborn as sns
 import matplotlib.pyplot as plt
 
-predict_file_window = "/Users/AndrewC 1/git/covid-forecast/output/us_predicts_window200.csv"
+df = pd.read_csv("https://raw.githubusercontent.com/nytimes/covid-19-data/master/us-states.csv")
+
+print(df["date"])
+
+predict_file_window = "/Users/AndrewC 1/git/covid-forecast/output/us_predict_window200Monthly.csv"
 predict_file = "/Users/AndrewC 1/git/covid-forecast/output/us_predicts.csv"
 
-df = pd.read_csv(predict_file)
+df = pd.read_csv(predict_file_window)
 
 def calc_percent_error(data, startdate):
     individual_percent_error = list()

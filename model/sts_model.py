@@ -1,4 +1,5 @@
 import numpy as np
+import collections
 import tensorflow as tf
 import tensorflow_probability as tfp
 from tensorflow_probability import sts
@@ -17,10 +18,14 @@ class modelSTS(baseModel):
         self.optimizer = None
         self.surrogate_posterior = None
         self.samples = None
+        self.forecast_dist = None
         pass
 
     def build_model_sts(self):
-        trend = sts.LocalLinearTrend(observed_time_series=self.training_data)
+        trend = sts.LocalLinearTrend(
+            observed_time_series=self.training_data,
+            name="local_linear_trend"
+        )
         twodays_seasonal = tfp.sts.Seasonal(
             num_seasons=2,
             observed_time_series=self.training_data,
@@ -106,15 +111,43 @@ class modelSTS(baseModel):
              for (param, param_draws) in zip(self.model.parameters, self.samples)}))
 
     def forcast_hmc(self, num_steps_forecast=10):
-        forecast_dist = tfp.sts.forecast(self.model, self.training_data,
+        self.forecast_dist = tfp.sts.forecast(self.model, self.training_data,
                                          parameter_samples=self.samples,
                                          num_steps_forecast=num_steps_forecast)
 
-        forecast_mean = forecast_dist.mean()[..., 0]  # shape: [50]
-        forecast_scale = forecast_dist.stddev()[..., 0]  # shape: [50]
-        forecast_samples = forecast_dist.sample()[..., 0]  # shape: [10, 50]
+        forecast_mean = self.forecast_dist.mean()[..., 0]  # shape: [50]
+        forecast_scale = self.forecast_dist.stddev()[..., 0]  # shape: [50]
+        forecast_samples = self.forecast_dist.sample()[..., 0]  # shape: [10, 50]
 
         return forecast_mean, forecast_scale, forecast_samples
+
+    def get_trend_dist(self):
+        component_dists = sts.decompose_by_component(
+            self.model,
+            observed_time_series=self.training_data,
+            parameter_samples=self.samples
+        )
+        forecast_component_dists = sts.decompose_forecast_by_component(
+            self.model,
+            forecast_dist=self.forecast_dist,
+            parameter_samples=self.samples
+        )
+        component_means, component_stddevs = (
+            {k.name: c.mean() for k, c in component_dists.items()},
+            {k.name: c.stddev() for k, c in component_dists.items()})
+        forecast_component_means, forecast_component_stddevs = (
+            {k.name: c.mean() for k, c in forecast_component_dists.items()},
+            {k.name: c.stddev() for k, c in forecast_component_dists.items()})
+        for key in component_means:
+            component_means[key] = component_means[key].numpy().tolist()
+        for key in component_stddevs:
+            component_stddevs[key] = component_stddevs[key].numpy().tolist()
+        for key in forecast_component_means:
+            forecast_component_means[key] = forecast_component_means[key].numpy().tolist()
+        for key in forecast_component_stddevs:
+            forecast_component_stddevs[key] = forecast_component_stddevs[key].numpy().tolist()
+
+        return component_means, component_stddevs, forecast_component_means, forecast_component_stddevs
 
     def plot_forecast(self,
                       observed_time_series,
