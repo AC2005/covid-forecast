@@ -26,31 +26,31 @@ class modelSTS(baseModel):
             observed_time_series=self.training_data,
             name="local_linear_trend"
         )
-        twodays_seasonal = tfp.sts.Seasonal(
-            num_seasons=2,
-            observed_time_series=self.training_data,
-            name="two_days_model"
-        )
+        # twodays_seasonal = tfp.sts.Seasonal(
+        #     num_seasons=2,
+        #     observed_time_series=self.training_data,
+        #     name="two_days_model"
+        # )
         threedays_seasonal = tfp.sts.Seasonal(
             num_seasons=3,
             observed_time_series=self.training_data,
             name="three_days_model"
         )
-        fivedays_seasonal = tfp.sts.Seasonal(
-            num_seasons=5,
-            observed_time_series=self.training_data,
-            name="five_days_model"
-        )
+        # fivedays_seasonal = tfp.sts.Seasonal(
+        #     num_seasons=5,
+        #     observed_time_series=self.training_data,
+        #     name="five_days_model"
+        #)
         weekly_seasonal = tfp.sts.Seasonal(
             num_seasons=7,
             observed_time_series=self.training_data,
             name="weekly_model"
         )
-        biweekly_seasonal = tfp.sts.Seasonal(
-            num_seasons=14,
-            observed_time_series=self.training_data,
-            name="biweekly_model"
-        )
+        # biweekly_seasonal = tfp.sts.Seasonal(
+        #     num_seasons=14,
+        #     observed_time_series=self.training_data,
+        #     name="biweekly_model"
+        # )
         monthly_seasonal = tfp.sts.Seasonal(
             num_seasons=30,
             observed_time_series=self.training_data,
@@ -62,11 +62,8 @@ class modelSTS(baseModel):
             name='residual'
         )
         self.model = sts.Sum([trend,
-                              twodays_seasonal,
                               threedays_seasonal,
-                              fivedays_seasonal,
                               weekly_seasonal,
-                              biweekly_seasonal,
                               monthly_seasonal,
                               residual_level
                               ], observed_time_series=self.training_data)

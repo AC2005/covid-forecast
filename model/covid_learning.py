@@ -112,7 +112,7 @@ def main():
             component_means, component_stddevs, forecast_component_means, forecast_component_stddevs = model_sts.get_trend_dist()
             parameter[str(dates[day])] = {
                 "component_means": component_means,
-                "component_steddevs": component_stddevs,
+                "component_stddevs": component_stddevs,
                 "forecast_component_means": forecast_component_means,
                 "forecast_component_stddevs": forecast_component_stddevs,
 
