@@ -7,17 +7,18 @@ df = pd.read_csv("https://raw.githubusercontent.com/nytimes/covid-19-data/master
 
 print(df["date"])
 
-predict_file_window = "/Users/AndrewC 1/git/covid-forecast/output/us_predict_window200Monthly.csv"
-predict_file = "/Users/AndrewC 1/git/covid-forecast/output/us_predicts.csv"
+predict_file_window = "/Users/AndrewC 1/git/covid-forecast/output/us_predicts_v2_200.csv"
+predict_file = "/Users/AndrewC 1/git/covid-forecast/output/us_predicts_v1_200.csv"
 
 df = pd.read_csv(predict_file_window)
+df2 = pd.read_csv(predict_file)
 
 def calc_percent_error(data, startdate):
     individual_percent_error = list()
     dates = list()
     predict = list()
     actual = list()
-    filtered_data = df.loc[df["Date"] >= startdate]
+    filtered_data = data.loc[data["Date"] >= startdate]
     filtered_data.reset_index(drop=True, inplace=True)
     for i in range(len(filtered_data)):
         actual_data = int(filtered_data['ActualCases'][i])
@@ -42,13 +43,18 @@ def calc_percent_error(data, startdate):
          '+2 STD': max_list,
          '-2 STD': min_list
          })
-    return adjusted_data_set
+    return adjusted_data_set, avg
 
-new_data = calc_percent_error(data=df, startdate="2020-10-01")
+new_data, average_error = calc_percent_error(data=df2, startdate="2020-10-01")
+print(new_data)
 
-# plt.plot(max)
-# plt.plot(min)
-# plt.show()
+plt.plot(df["Predicts"][0:32], color="blue")
+plt.plot(df["ActualCases"][0:32], color="red")
+plt.show()
+
+plt.plot(df2["Predicts"], color="blue")
+plt.plot(df2["ActualCases"], color="red")
+plt.show()
 
 
 print(max)
