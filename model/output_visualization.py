@@ -7,7 +7,7 @@ df = pd.read_csv("https://raw.githubusercontent.com/nytimes/covid-19-data/master
 
 print(df["date"])
 
-predict_file_window = "/Users/AndrewC 1/git/covid-forecast/output/us_predicts_v2_200.csv"
+predict_file_window = "/Users/AndrewC 1/git/covid-forecast/output/us_predicts_v3_200.csv"
 predict_file = "/Users/AndrewC 1/git/covid-forecast/output/us_predicts_v1_200.csv"
 
 df = pd.read_csv(predict_file_window)
@@ -41,11 +41,12 @@ def calc_percent_error(data, startdate):
          'ActualCases': actual,
          'Preidcts': predict,
          '+2 STD': max_list,
-         '-2 STD': min_list
+         '-2 STD': min_list,
+         'Percent Error': individual_percent_error
          })
     return adjusted_data_set, avg
 
-new_data, average_error = calc_percent_error(data=df2, startdate="2020-10-01")
+new_data, average_error = calc_percent_error(data=df, startdate="2020-10-01")
 print(new_data)
 
 plt.plot(df["Predicts"][0:32], color="blue")
