@@ -2,7 +2,7 @@ import argparse
 import logging
 import json
 from model.sts_model import *
-from model.nn_model import *
+# from model.nn_model import *
 
 df = pd.read_csv("https://raw.githubusercontent.com/nytimes/covid-19-data/master/us-states.csv")
 dfUS = pd.read_csv("https://raw.githubusercontent.com/nytimes/covid-19-data/master/us.csv")

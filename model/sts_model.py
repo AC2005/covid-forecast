@@ -57,12 +57,12 @@ class modelSTS(baseModel):
         ninedays_seasonal = tfp.sts.Seasonal(
             num_seasons=9,
             observed_time_series=self.training_data,
-            name="weekly_model"
+            name="ninedays_model"
         )
         elevendays_seasonal = tfp.sts.Seasonal(
             num_seasons=11,
             observed_time_series=self.training_data,
-            name="weekly_model"
+            name="elevendays_model"
         )
         biweekly_seasonal = tfp.sts.Seasonal(
             num_seasons=14,
