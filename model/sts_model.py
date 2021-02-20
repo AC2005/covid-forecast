@@ -54,20 +54,25 @@ class modelSTS(baseModel):
             observed_time_series=self.training_data,
             name="weekly_model"
         )
-        ninedays_seasonal = tfp.sts.Seasonal(
-            num_seasons=9,
-            observed_time_series=self.training_data,
-            name="ninedays_model"
-        )
-        elevendays_seasonal = tfp.sts.Seasonal(
-            num_seasons=11,
-            observed_time_series=self.training_data,
-            name="elevendays_model"
-        )
+        # ninedays_seasonal = tfp.sts.Seasonal(
+        #     num_seasons=9,
+        #     observed_time_series=self.training_data,
+        #     name="ninedays_model"
+        # )
+        # elevendays_seasonal = tfp.sts.Seasonal(
+        #     num_seasons=11,
+        #     observed_time_series=self.training_data,
+        #     name="elevendays_model"
+        #)
         biweekly_seasonal = tfp.sts.Seasonal(
             num_seasons=14,
             observed_time_series=self.training_data,
             name="biweekly_model"
+        )
+        triweekly_seasonal = tfp.sts.Seasonal(
+            num_seasons=21,
+            observed_time_series=self.training_data,
+            name="triweekly_model",
         )
         monthly_seasonal = tfp.sts.Seasonal(
             num_seasons=30,
@@ -86,9 +91,8 @@ class modelSTS(baseModel):
                               threedays_seasonal,
                               fivedays_seasonal,
                               weekly_seasonal,
-                              ninedays_seasonal,
-                              elevendays_seasonal,
                               biweekly_seasonal,
+                              triweekly_seasonal,
                               monthly_seasonal,
                               residual_level
                               ], observed_time_series=self.training_data)

@@ -7,7 +7,7 @@ df = pd.read_csv("https://raw.githubusercontent.com/nytimes/covid-19-data/master
 
 print(df["date"])
 
-predict_file_window = "/Users/AndrewC 1/git/covid-forecast/output/us_predicts_v3_200.csv"
+predict_file_window = "/Users/AndrewC 1/git/covid-forecast/output/us_predicts_v4_200.csv"
 predict_file = "/Users/AndrewC 1/git/covid-forecast/output/us_predicts_v1_200.csv"
 
 df = pd.read_csv(predict_file_window)
@@ -25,14 +25,24 @@ def calc_percent_error(data, startdate):
         predicts = int(filtered_data["Predicts"][i])
         if predicts == 0 or actual_data == 0:
             continue
+        temp_perc_error = np.abs((actual_data - predicts)/(predicts))
         dates.append(filtered_data['Date'][i])
         predict.append(predicts)
         actual.append(actual_data)
-        temp_perc_error = np.abs((actual_data - predicts)/(predicts))
         individual_percent_error.append(temp_perc_error)
-
+    error_Q3 = np.median(np.sort(individual_percent_error)[int(len(individual_percent_error) / 2):])
+    error_IQR = np.median(np.sort(individual_percent_error)[int(len(individual_percent_error) / 2):]) - np.median(
+    np.sort(individual_percent_error[int(len(individual_percent_error) / 2):]))
+    where_list = np.where(individual_percent_error > error_Q3 + 1.5 * error_IQR)
+    remove_indices = where_list[0]
+    for i in sorted(remove_indices, reverse=True):
+        del individual_percent_error[i]
+        del dates[i]
+        del actual[i]
+        del predict[i]
     std = np.std(individual_percent_error)
     avg = np.average(individual_percent_error)
+
 
     max_list = [predict[i] * (1+2*std) for i in range(len(predict))]
     min_list = [predict[i] * (1-2*std) for i in range(len(predict))]
