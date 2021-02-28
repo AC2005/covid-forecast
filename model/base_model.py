@@ -69,5 +69,5 @@ class baseModel:
         if end < len(cases):
             return cases.iloc[start:end]
 
-        return pd.DataFrame(cases[start:].astype(np.int).values.tolist()
+        return pd.DataFrame(cases[start:].astype(np.int).values.tolist()[0]
                             + [np.NaN for i in range(end-len(cases))], columns=[CASES_COLUMN])
