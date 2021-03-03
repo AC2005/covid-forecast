@@ -118,7 +118,7 @@ def main():
         for day in range(start_index, last_index, args.steps):
             if args.window_size > 0:
                 if day > len(updated_daily_cases):
-                    cases = pd.DataFrame(np.append(updated_daily_cases.loc[day-args.window_size:],forecast_cases.loc[:day-len(daily_cases)-1]))
+                    cases = pd.DataFrame(np.append(updated_daily_cases.loc[day-args.window_size:],forecast_cases.loc[:day-len(updated_daily_cases)-1]))
                 else:
                     cases = updated_daily_cases.loc[day - args.window_size:day-1]
                 model_sts = modelSTS(200, cases)
@@ -133,8 +133,8 @@ def main():
                                   model_sts.get_actual_cases(daily_cases, day, day+args.steps),
                                   CASES_COLUMN,
                                   forecast_mean[:args.steps].numpy())
-            if day >= len(daily_cases):
-                forecast_cases.iloc[day-len(daily_cases)]=forecast_mean[:args.steps].numpy()[0]
+            if day >= len(updated_daily_cases):
+                forecast_cases.iloc[day-len(updated_daily_cases)]=forecast_mean[:args.steps].numpy()[0]
 
             component_means, component_stddevs, forecast_component_means, forecast_component_stddevs = model_sts.get_trend_dist()
             if day < len(dates):
